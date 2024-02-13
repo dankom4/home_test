@@ -27,7 +27,7 @@ async def sing_up(users: UserFull, response: Response):
         return f'USER: {users.username.upper()} CREATED'
 
 
-@router.post('/login')
+@router.post('/user/me/login')
 async def login_user(users: UserFull, response: Response):
     await auth.login_for_access_token(form_data=UserOauth2(username=users.email, password=users.password),
                                       response=response)
@@ -46,6 +46,16 @@ async def logout(
 @router.get('/user/me')
 async def read_me(current_user: Annotated[User, Depends(auth.get_current_user)]):
     return current_user
+
+
+@router.delete('/user/me/delete')
+async def read_me(current_user: Annotated[User, Depends(auth.get_current_user)], response: Response):
+    async with async_session() as session:
+        response.delete_cookie(key='Authorization')
+        await session.delete(current_user)
+        await session.flush()
+        await session.commit()
+    return f'USER: {current_user.username} DELETE'
 
 
 
