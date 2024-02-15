@@ -3,8 +3,9 @@ from sqlalchemy.orm import DeclarativeBase
 
 
 engine = create_async_engine(url='postgresql+asyncpg://postgres:postgresql@localhost/postgres')
+engine_docker = create_async_engine(url='postgresql+asyncpg://username:password@db/dan')
 
-async_session = async_sessionmaker(engine)
+async_session = async_sessionmaker(engine_docker)
 
 
 class Base(DeclarativeBase):
