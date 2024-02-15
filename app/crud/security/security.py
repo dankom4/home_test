@@ -1,14 +1,17 @@
+from typing import Annotated
+
 import fastapi
 import jwt
 from fastapi import Depends, HTTPException, status, Response, APIRouter
 from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy import select
 from jose import JWTError
 from passlib.context import CryptContext
-from typing import Annotated
+
 from app.db.database import async_session
-from sqlalchemy import select
 from app.models.models_for_user import User
 from app.crud.security.schemas import Token, OAuth2PasswordBearerWithCookieOnly
+
 
 router = APIRouter(prefix='/auth')
 router.include_router(router=router)

@@ -1,26 +1,30 @@
-from passlib.context import CryptContext
-
-from app.db.database import engine, Base, async_session
 from fastapi import APIRouter
-from app.models.models_for_user import User
-from app.schemas.schemas_for_user import UserFull
+
+from app.db.database import engine, Base, engine_docker
 
 
-router = APIRouter(prefix='/table', tags=['TABLE'])
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+router = APIRouter(prefix='/table')
 
 
-async def get_password_hash(password):
-    return pwd_context.hash(password)
-
-
-@router.post('/create_table')
-async def table_create():
+@router.post('/create_table', tags=['TABLE'])
+async def create_table():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
 
-@router.post('/drop')
-async def drop():
+@router.post('/drop_table', tags=['TABLE'])
+async def drop_table():
     async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
+
+
+@router.post('/create_table_docker', tags=['DOCKER'])
+async def create_table_docker():
+    async with engine_docker.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+
+@router.post('/drop_table_docker', tags=['DOCKER'])
+async def drop_table_docker():
+    async with engine_docker.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
